@@ -1,26 +1,25 @@
+import 'package:flutter/material.dart';
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  var l = [];
-  var t = 0.0;
-  
-  void a(String n, double p, int q) {
+  final List<Map<String, dynamic>> _productos = [];
+  double _total = 0.0;
+
+  void _agregarProducto(String nombre, double precio, int cantidad) {
     setState(() {
-      l.add({"n": n, "p": p, "q": q});
-      c();
+      _productos.add({"nombre": nombre, "precio": precio, "cantidad": cantidad});
+      _calcularTotal();
     });
   }
-  
-  void c() {
-    t = 0;
-    for (var i = 0; i < l.length; i++) {
-      t += l[i]["p"] * l[i]["q"];
-    }
+
+  void _calcularTotal() {
+    _total = _productos.fold(0, (suma, producto) => suma + producto["precio"] * producto["cantidad"]);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,15 +27,18 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(title: Text("Mi App")),
         body: Column(
           children: [
-            // Interfaz para agregar productos...
-            Text("Total: \$${t.toStringAsFixed(2)}"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Total: \$${_total.toStringAsFixed(2)}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
             Expanded(
               child: ListView.builder(
-                itemCount: l.length,
+                itemCount: _productos.length,
                 itemBuilder: (context, index) {
+                  final producto = _productos[index];
                   return ListTile(
-                    title: Text(l[index]["n"]),
-                    subtitle: Text("Precio: \$${l[index]["p"]} x ${l[index]["q"]}"),
+                    title: Text(producto["nombre"]),
+                    subtitle: Text("Precio: \$${producto["precio"]} x ${producto["cantidad"]}"),
                   );
                 },
               ),
@@ -46,4 +48,8 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MyApp());
 }
